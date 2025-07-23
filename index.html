@@ -123,7 +123,124 @@
   <div class="input-row">
     <select id="country-select"></select>
 
-    <input id="input1" type="text" maxlength="3" placeholder="1" inputmode="numeric" />
+    <!-- Replace the <select> with an input + datalist -->
+<input id="country-select" list="country-codes" placeholder="Gn" />
+<datalist id="country-codes"></datalist>
+
+<input id="input1" type="text" maxlength="3" placeholder="1" inputmode="numeric" />
+<span class="separator">:</span>
+<input id="input2" type="text" maxlength="3" placeholder="2" inputmode="numeric" />
+<span id="dash" class="separator dash-separator">-</span>
+<input id="input3" class="special-input" type="text" maxlength="3" placeholder="10" inputmode="numeric" />
+
+<button id="send-btn">⇒</button>
+</div>
+<div id="confirmation" class="confirmation" style="display:none;"></div>
+</div>
+
+<script>
+  const countryData = {'Gn': 50, 'Ex': 40, 'Lv': 27, 'Nb': 36, 'Dt': 34, 'Jos': 24, 'Jg': 21, 'Rt': 4, '1S': 31, '2S': 24, '1R': 22, 
+                       '2R': 25, '1Ch': 29, '2Ch': 36, 'Esd': 10, 'Ne': 13, 'Tb': 14, 'Jdt': 16, 'Est': 16, '1M': 16, '2M': 15, 'Jb': 42, 
+                       'Ps': 150, 'Pr': 31, 'Qo': 12, 'Ct': 8, 'Sg': 19, 'Si': 51, 'Is': 66, 'Jr': 52, 'Lm': 5, 'Ba': 6, 'Ez': 48, 'Dn': 14, 
+                       'Os': 14, 'Jl': 4, 'Am': 9, 'Ab': 1, 'Jon': 4, 'Mi': 7, 'Na': 3, 'Ha': 3, 'So': 3, 'Ag': 2, 'Za': 14, 'Ml': 3, 'Mt': 28, 
+                       'Mc': 16, 'Lc': 24, 'Jn': 21, 'Ac': 28, 'Rm': 16, '1Co': 16, '2Co': 13, 'Ga': 6, 'Ep': 6, 'Ph': 4, 'Col': 4, '1Th': 5, '2Th': 3, 
+                       '1Tm': 6, '2Tm': 4, 'Tt': 3, 'Phm': 1, 'He': 13, 'Jc': 5, '1P': 5, '2P': 3, '1Jn': 5, '2Jn': 1, '3Jn': 1, 'Jude': 1, 'Ap': 22};
+
+  const countrySelect = document.getElementById('country-select');
+  const datalist = document.getElementById('country-codes');
+  const input1 = document.getElementById('input1');
+  const input2 = document.getElementById('input2');
+  const input3 = document.getElementById('input3');
+  const dash = document.getElementById('dash');
+  const sendBtn = document.getElementById('send-btn');
+  const confirmation = document.getElementById('confirmation');
+
+  // Populate datalist with codes
+  for (const code in countryData) {
+    const option = document.createElement('option');
+    option.value = code;
+    datalist.appendChild(option);
+  }
+
+  function updateInput1Constraints() {
+    const selectedCode = countrySelect.value;
+    const max = countryData[selectedCode];
+    const digits = String(max || 3).length;
+    input1.setAttribute('maxlength', digits);
+    input1.style.width = `${digits * 6 + 12}px`;
+
+    const value = parseInt(input1.value, 10);
+    if (!isNaN(value) && max && value > max) {
+      input1.value = '1';
+    }
+
+    validateInput1();
+  }
+
+  function validateInput1() {
+    const selectedCode = countrySelect.value;
+    const max = countryData[selectedCode];
+    const val = parseInt(input1.value, 10);
+    if (!isNaN(val) && max && val > max) {
+      input1.classList.add('invalid');
+    } else {
+      input1.classList.remove('invalid');
+    }
+  }
+
+  countrySelect.addEventListener('change', updateInput1Constraints);
+  countrySelect.addEventListener('input', updateInput1Constraints); // For free typing
+
+  input1.addEventListener('input', () => {
+    validateInput1();
+    if (input1.value.length === input1.maxLength) {
+      input2.focus();
+    }
+  });
+
+  input2.addEventListener('input', () => {
+    if (input2.value.length === input2.maxLength) {
+      input3.focus();
+    }
+  });
+
+  input3.addEventListener('input', () => {
+    dash.classList.toggle('dash-filled', input3.value.length > 0);
+  });
+
+  sendBtn.addEventListener('click', () => {
+    const part1 = input1.value.trim();
+    const part2 = input2.value.trim();
+    const part3 = input3.value.trim();
+    const selectedCode = countrySelect.value;
+    const max = countryData[selectedCode];
+
+    if (!countryData.hasOwnProperty(selectedCode)) {
+      confirmation.style.color = '#c53030';
+      confirmation.textContent = 'Invalid country code.';
+      confirmation.style.display = 'block';
+      return;
+    }
+
+    if (!part1 || isNaN(part1) || parseInt(part1) > max || !part2 || isNaN(part2)) {
+      confirmation.style.color = '#c53030';
+      confirmation.textContent = 'Please enter valid numbers in the first two boxes.';
+      confirmation.style.display = 'block';
+      return;
+    }
+
+    const phone = `${selectedCode} ${part1}:${part2}` + (part3 ? `-${part3}` : '');
+    confirmation.style.color = '#2f855a';
+    confirmation.textContent = `Phone number ${phone} sent successfully!`;
+    confirmation.style.display = 'block';
+  });
+
+  // Initial setup
+  updateInput1Constraints();
+</script>
+
+
+<!--     <input id="input1" type="text" maxlength="3" placeholder="1" inputmode="numeric" />
     <span class="separator">:</span>
     <input id="input2" type="text" maxlength="3" placeholder="2" inputmode="numeric" />
     <span id="dash" class="separator dash-separator">-</span>
@@ -230,4 +347,4 @@
 </script>
 
 </body>
-</html>
+</html> -->
