@@ -233,14 +233,14 @@
       if (!countryData.hasOwnProperty(selectedCode)) {
         confirmation.style.color = '#c53030';
         confirmation.textContent = 'La référence entrée est incorrecte.';
-        // confirmation.style.display = 'block';
+        confirmation.style.display = 'block';
         return;
       }
   
       if (!part1 || isNaN(part1) || parseInt(part1) > max || !part2 || isNaN(part2)) {
         confirmation.style.color = '#c53030';
         confirmation.textContent = 'La référence entrée est incomplète.';
-        // confirmation.style.display = 'block';
+        confirmation.style.display = 'block';
         return;
       }
   
