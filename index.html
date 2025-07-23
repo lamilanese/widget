@@ -35,16 +35,18 @@
 
     select {
       font-family: Georgia, serif;
-      background: transparent;
-      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1.5px solid #cbd5e1;
       font-size: 16px;
+      background: #f7fafc;
       cursor: pointer;
-      padding: 8px 4px;
-      appearance: none;
+      transition: border-color 0.3s;
     }
 
     select:focus {
       outline: none;
+      border-color: #3182ce;
     }
 
     input[type="text"] {
