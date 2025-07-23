@@ -1,112 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Phone Input</title>
-<style>
-  body {
-    font-family: Georgia, serif;
-    background: #f0f4f8;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-  }
-  .container {
-    background: white;
-    border-radius: 16px;
-    padding: 24px 32px;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    width: 360px;
-  }
-  .input-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .toggle {
-    background: #e2e8f0;
-    border-radius: 30px;
-    padding: 6px 14px;
-    cursor: pointer;
-    user-select: none;
-    font-weight: bold;
-    min-width: 50px;
-    text-align: center;
-    transition: background-color 0.3s;
-  }
-  .toggle:hover {
-    background: #cbd5e1;
-  }
-  input[type="text"] {
-    width: 50px;
-    padding: 8px;
-    font-size: 16px;
-    border-radius: 8px;
-    border: 1.5px solid #cbd5e1;
-    text-align: center;
-    font-family: Georgia, serif;
-    transition: border-color 0.3s;
-  }
-  input[type="text"]:focus {
-    outline: none;
-    border-color: #3182ce;
-  }
-  button {
-    margin-left: auto;
-    background: #3182ce;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    font-family: Georgia, serif;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s;
-  }
-  button:hover {
-    background: #2b6cb0;
-  }
-  .confirmation {
-    margin-top: 20px;
-    color: #2f855a;
-    font-weight: 600;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Phone Input App</title>
+  <style>
+    body {
+      font-family: Georgia, serif;
+      background: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      border-radius: 16px;
+      padding: 24px 32px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      width: 360px;
+      box-sizing: border-box;
+    }
+    .input-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    select {
+      font-family: Georgia, serif;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1.5px solid #cbd5e1;
+      font-size: 16px;
+      background: #f7fafc;
+      cursor: pointer;
+      transition: border-color 0.3s;
+    }
+    select:focus {
+      outline: none;
+      border-color: #3182ce;
+    }
+    input[type="text"] {
+      width: 50px;
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1.5px solid #cbd5e1;
+      text-align: center;
+      font-family: Georgia, serif;
+      transition: border-color 0.3s;
+    }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #3182ce;
+    }
+    .button-wrapper {
+      margin-left: auto;
+    }
+    button {
+      background: #3182ce;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-family: Georgia, serif;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background: #2b6cb0;
+    }
+    .confirmation {
+      margin-top: 20px;
+      color: #2f855a;
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
 
 <div class="container">
   <div class="input-row">
-    <div id="country-toggle" class="toggle">+1</div>
-    <input type="text" maxlength="3" pattern="\d*" placeholder="123" inputmode="numeric" />
-    <input type="text" maxlength="3" pattern="\d*" placeholder="456" inputmode="numeric" />
-    <input type="text" maxlength="4" pattern="\d*" placeholder="7890" inputmode="numeric" />
-    <button id="send-btn">Send</button>
+    <select id="country-select">
+      <option value="+1">+1 (USA)</option>
+      <option value="+44">+44 (UK)</option>
+      <option value="+91">+91 (India)</option>
+      <option value="+61">+61 (Australia)</option>
+    </select>
+    <input type="text" maxlength="3" placeholder="123" inputmode="numeric" />
+    <input type="text" maxlength="3" placeholder="456" inputmode="numeric" />
+    <input type="text" maxlength="4" placeholder="7890" inputmode="numeric" />
+    <div class="button-wrapper">
+      <button id="send-btn">Send</button>
+    </div>
   </div>
   <div id="confirmation" class="confirmation" style="display:none;"></div>
 </div>
 
 <script>
-  const toggle = document.getElementById('country-toggle');
-  const countryCodes = ['+1', '+44'];
-  let currentIndex = 0;
-
-  toggle.addEventListener('click', () => {
-    currentIndex = (currentIndex + 1) % countryCodes.length;
-    toggle.textContent = countryCodes[currentIndex];
-  });
-
   const sendBtn = document.getElementById('send-btn');
   const inputs = document.querySelectorAll('input[type="text"]');
   const confirmation = document.getElementById('confirmation');
+  const countrySelect = document.getElementById('country-select');
 
   sendBtn.addEventListener('click', () => {
-    // Validate inputs are numeric and filled
     for (const input of inputs) {
       if (!input.value || !/^\d+$/.test(input.value)) {
         confirmation.style.color = '#c53030';
@@ -115,10 +117,8 @@
         return;
       }
     }
-    const phone = toggle.textContent + ' ' + 
-                  inputs[0].value + '-' + 
-                  inputs[1].value + '-' + 
-                  inputs[2].value;
+
+    const phone = `${countrySelect.value} ${inputs[0].value}-${inputs[1].value}-${inputs[2].value}`;
     confirmation.style.color = '#2f855a';
     confirmation.textContent = `Phone number ${phone} sent successfully!`;
     confirmation.style.display = 'block';
