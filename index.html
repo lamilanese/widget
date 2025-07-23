@@ -64,6 +64,21 @@
       outline: none;
       border-color: #3182ce;
     }
+    
+    .separator {
+      font-size: 18px;
+      font-weight: bold;
+      color: #4a5568;
+      transition: opacity 0.3s;
+    }
+
+    .dash-separator {
+      opacity: 0.4;
+    }
+
+    .dash-filled {
+      opacity: 1;
+    }
 
     button {
       background: #3182ce;
@@ -100,9 +115,11 @@
     </select>
 
     <input type="text" maxlength="3" placeholder="123" inputmode="numeric" />
+    <span class="separator">:</span>
     <input type="text" maxlength="3" placeholder="456" inputmode="numeric" />
-    <input type="text" maxlength="4" placeholder="7890" inputmode="numeric" />
-
+    <span id="dash" class="separator dash-separator">-</span>
+    <input type="text" maxlength="4" placeholder="7890 (optional)" inputmode="numeric" />
+    
     <button id="send-btn">Send</button>
   </div>
   <div id="confirmation" class="confirmation" style="display:none;"></div>
@@ -113,6 +130,7 @@
   const inputs = document.querySelectorAll('input[type="text"]');
   const confirmation = document.getElementById('confirmation');
   const countrySelect = document.getElementById('country-select');
+  const dash = document.getElementById('dash');
 
   // Auto move to next input
   inputs.forEach((input, idx) => {
@@ -120,20 +138,25 @@
       if (input.value.length === input.maxLength && idx < inputs.length - 1) {
         inputs[idx + 1].focus();
       }
+      // Update dash opacity based on input 3
+      if (idx === 2) {
+        dash.classList.toggle('dash-filled', input.value.length > 0);
+      }
     });
   });
 
   sendBtn.addEventListener('click', () => {
-    for (const input of inputs) {
-      if (!input.value || !/^\d+$/.test(input.value)) {
-        confirmation.style.color = '#c53030';
-        confirmation.textContent = 'Please enter valid numbers in all boxes.';
-        confirmation.style.display = 'block';
-        return;
-      }
+    const inputValues = Array.from(inputs).map(input => input.value.trim());
+    const [part1, part2, part3] = inputValues;
+
+    if (!part1 || !/^\d+$/.test(part1) || !part2 || !/^\d+$/.test(part2)) {
+      confirmation.style.color = '#c53030';
+      confirmation.textContent = 'Please enter valid numbers in the first two boxes.';
+      confirmation.style.display = 'block';
+      return;
     }
 
-    const phone = `${countrySelect.value} ${inputs[0].value}-${inputs[1].value}-${inputs[2].value}`;
+    const phone = `${countrySelect.value} ${part1}:${part2}` + (part3 ? `-${part3}` : '');
     confirmation.style.color = '#2f855a';
     confirmation.textContent = `Phone number ${phone} sent successfully!`;
     confirmation.style.display = 'block';
