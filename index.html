@@ -79,6 +79,10 @@
       background: #eef2f3;
     }
 
+    input[type="text"].normal-input {
+      background: #eef2f3;
+    }
+
     .separator {
       font-size: 16px;
       font-weight: bold;
@@ -206,6 +210,7 @@
   
     input3.addEventListener('input', () => {
       dash.classList.toggle('dash-filled', input3.value.length > 0);
+      input3.classList.toggle('normal-input', input3.value.length > 0);
     });
   
     sendBtn.addEventListener('click', () => {
