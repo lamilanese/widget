@@ -162,7 +162,7 @@
     const max = countryData[selectedCode];
     const digits = String(max).length;
     input1.setAttribute('maxlength', digits);
-    input1.style.width = `${digits * 16 + 12}px`;
+    input1.style.width = `${digits * 6 + 12}px`;
 
     const value = parseInt(input1.value, 10);
     if (!isNaN(value) && value > max) {
