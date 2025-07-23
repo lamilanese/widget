@@ -14,6 +14,7 @@
       height: 100vh;
       margin: 0;
     }
+
     .container {
       background: white;
       border-radius: 16px;
@@ -21,29 +22,31 @@
       box-shadow: 0 6px 15px rgba(0,0,0,0.1);
       display: flex;
       flex-direction: column;
-      width: 360px;
+      width: fit-content;
       box-sizing: border-box;
     }
+
     .input-row {
       display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
       align-items: center;
+      gap: 12px;
+      flex-wrap: nowrap;
     }
+
     select {
       font-family: Georgia, serif;
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: 1.5px solid #cbd5e1;
+      background: transparent;
+      border: none;
       font-size: 16px;
-      background: #f7fafc;
       cursor: pointer;
-      transition: border-color 0.3s;
+      padding: 8px 4px;
+      appearance: none;
     }
+
     select:focus {
       outline: none;
-      border-color: #3182ce;
     }
+
     input[type="text"] {
       width: 50px;
       padding: 8px;
@@ -54,13 +57,12 @@
       font-family: Georgia, serif;
       transition: border-color 0.3s;
     }
+
     input[type="text"]:focus {
       outline: none;
       border-color: #3182ce;
     }
-    .button-wrapper {
-      margin-left: auto;
-    }
+
     button {
       background: #3182ce;
       border: none;
@@ -72,11 +74,13 @@
       font-weight: 600;
       transition: background-color 0.3s;
     }
+
     button:hover {
       background: #2b6cb0;
     }
+
     .confirmation {
-      margin-top: 20px;
+      margin-top: 16px;
       color: #2f855a;
       font-weight: 600;
     }
@@ -92,12 +96,12 @@
       <option value="+91">+91 (India)</option>
       <option value="+61">+61 (Australia)</option>
     </select>
+
     <input type="text" maxlength="3" placeholder="123" inputmode="numeric" />
     <input type="text" maxlength="3" placeholder="456" inputmode="numeric" />
     <input type="text" maxlength="4" placeholder="7890" inputmode="numeric" />
-    <div class="button-wrapper">
-      <button id="send-btn">Send</button>
-    </div>
+
+    <button id="send-btn">Send</button>
   </div>
   <div id="confirmation" class="confirmation" style="display:none;"></div>
 </div>
@@ -107,6 +111,15 @@
   const inputs = document.querySelectorAll('input[type="text"]');
   const confirmation = document.getElementById('confirmation');
   const countrySelect = document.getElementById('country-select');
+
+  // Auto move to next input
+  inputs.forEach((input, idx) => {
+    input.addEventListener('input', () => {
+      if (input.value.length === input.maxLength && idx < inputs.length - 1) {
+        inputs[idx + 1].focus();
+      }
+    });
+  });
 
   sendBtn.addEventListener('click', () => {
     for (const input of inputs) {
