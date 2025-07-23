@@ -1,5 +1,5 @@
 function doGet() {
-  return HtmlService.createHtmlOutputFromFile('embed')
+  return HtmlService.createHtmlOutputFromFile('index')
     .setSandboxMode(HtmlService.SandboxMode.IFRAME);
 }
 
