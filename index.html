@@ -9,11 +9,13 @@
       font-family: Georgia, serif;
       transition: background-color 0.3s ease;
       background: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
       margin: 0;
+      padding: 20px 0 0 0;  /* ✅ 20px space at the top */
+      display: flex;
+      justify-content: center; /* center horizontally only */
+      align-items: flex-start; /* align items to the top */
+      height: 100vh;
+      box-sizing: border-box;
     }
     @media (prefers-color-scheme: dark) {
       body {
