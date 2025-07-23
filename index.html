@@ -7,12 +7,18 @@
   <style>
     body {
       font-family: Georgia, serif;
+      transition: background-color 0.3s ease;
       background: white;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
+    }
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #000;
+      }
     }
 
     .container {
