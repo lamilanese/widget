@@ -231,14 +231,14 @@
       if (!countryData.hasOwnProperty(selectedCode)) {
         confirmation.style.color = '#c53030';
         confirmation.textContent = 'Invalid country code.';
-        confirmation.style.display = 'block';
+        // confirmation.style.display = 'block';
         return;
       }
   
       if (!part1 || isNaN(part1) || parseInt(part1) > max || !part2 || isNaN(part2)) {
         confirmation.style.color = '#c53030';
         confirmation.textContent = 'Please enter valid numbers in the first two boxes.';
-        confirmation.style.display = 'block';
+        // confirmation.style.display = 'block';
         return;
       }
   
