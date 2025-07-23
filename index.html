@@ -35,6 +35,17 @@
       max-width: 90vw;
     }
 
+    #confirmation {
+      max-width: 90vw;
+      width: fit-content;
+      margin: 8px auto 0;  /* vertical spacing and center horizontally */
+      font-size: 14px;
+      text-align: center;  /* or left if you prefer */
+      color: #2f855a;      /* green by default, override with JS on error */
+      font-family: Georgia, serif;
+      font-weight: 600;
+    }
+
     .input-row {
       display: flex;
       align-items: center;
@@ -114,12 +125,6 @@
     button:hover {
       background: #202243;
     }
-
-    .confirmation {
-      margin-top: 16px;
-      color: #2f855a;
-      font-weight: 600;
-    }
   </style>
 </head>
 <body>
@@ -140,8 +145,9 @@
   
   <button id="send-btn">⇒</button>
   </div>
-  <div id="confirmation" class="confirmation" style="display:none;"></div>
   </div>
+  
+  <div id="confirmation" class="confirmation" style="display:none;"></div>
   
   <script>
     const countryData = {'Gn': 50, 'Ex': 40, 'Lv': 27, 'Nb': 36, 'Dt': 34, 'Jos': 24, 'Jg': 21, 'Rt': 4, '1S': 31, '2S': 24, '1R': 22, 
