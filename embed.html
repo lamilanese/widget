@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My App</title>
+</head>
+<body>
+  <h1>My Google Apps Script App in Notion</h1>
+  <div id="output"></div>
+
+  <script>
+    // Replace with your deployed Apps Script Web App URL
+    const scriptUrl = 'https://script.google.com/macros/library/d/1tCbkPLTl1_4m6NWBCY34Ri4co76ZRUwp8qPJ29FjmcfDqD4JW5gVfBKI/97';
+
+    fetch(scriptUrl)
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('output').innerText = data;
+      })
+      .catch(err => {
+        document.getElementById('output').innerText = 'Error: ' + err;
+      });
+  </script>
+</body>
+</html>
