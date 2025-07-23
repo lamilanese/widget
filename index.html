@@ -107,60 +107,112 @@
 
 <div class="container">
   <div class="input-row">
-    <select id="country-select">
-      <option value="+1">+1 (USA)</option>
-      <option value="+44">+44 (UK)</option>
-      <option value="+91">+91 (India)</option>
-      <option value="+61">+61 (Australia)</option>
-    </select>
+    <select id="country-select"></select>
 
-    <input type="text" maxlength="3" placeholder="123" inputmode="numeric" />
+    <input id="input1" type="text" maxlength="3" placeholder="123" inputmode="numeric" />
     <span class="separator">:</span>
-    <input type="text" maxlength="3" placeholder="456" inputmode="numeric" />
+    <input id="input2" type="text" maxlength="3" placeholder="456" inputmode="numeric" />
     <span id="dash" class="separator dash-separator">-</span>
-    <input type="text" maxlength="4" placeholder="7890 (optional)" inputmode="numeric" />
-    
+    <input id="input3" type="text" maxlength="4" placeholder="7890" inputmode="numeric" />
+
     <button id="send-btn">Send</button>
   </div>
   <div id="confirmation" class="confirmation" style="display:none;"></div>
 </div>
 
 <script>
-  const sendBtn = document.getElementById('send-btn');
-  const inputs = document.querySelectorAll('input[type="text"]');
-  const confirmation = document.getElementById('confirmation');
-  const countrySelect = document.getElementById('country-select');
-  const dash = document.getElementById('dash');
+  const countryData = {
+    "+1": 999,
+    "+44": 99,
+    "+91": 999,
+    "+81": 99
+  };
 
-  // Auto move to next input
-  inputs.forEach((input, idx) => {
-    input.addEventListener('input', () => {
-      if (input.value.length === input.maxLength && idx < inputs.length - 1) {
-        inputs[idx + 1].focus();
-      }
-      // Update dash opacity based on input 3
-      if (idx === 2) {
-        dash.classList.toggle('dash-filled', input.value.length > 0);
-      }
-    });
+  const countrySelect = document.getElementById('country-select');
+  const input1 = document.getElementById('input1');
+  const input2 = document.getElementById('input2');
+  const input3 = document.getElementById('input3');
+  const inputs = [input1, input2, input3];
+  const dash = document.getElementById('dash');
+  const sendBtn = document.getElementById('send-btn');
+  const confirmation = document.getElementById('confirmation');
+
+  // Populate dropdown from keys only
+  for (const code in countryData) {
+    const opt = document.createElement('option');
+    opt.value = code;
+    opt.textContent = code;
+    countrySelect.appendChild(opt);
+  }
+
+  function updateInput1Constraints() {
+    const selectedCode = countrySelect.value;
+    const max = countryData[selectedCode];
+    const digits = String(max).length;
+    input1.setAttribute('maxlength', digits);
+    input1.style.width = `${digits * 16 + 12}px`;
+
+    const value = parseInt(input1.value, 10);
+    if (!isNaN(value) && value > max) {
+      input1.value = '1';
+    }
+
+    validateInput1();
+  }
+
+  function validateInput1() {
+    const selectedCode = countrySelect.value;
+    const max = countryData[selectedCode];
+    const val = parseInt(input1.value, 10);
+    if (!isNaN(val) && val > max) {
+      input1.classList.add('invalid');
+    } else {
+      input1.classList.remove('invalid');
+    }
+  }
+
+  countrySelect.addEventListener('change', updateInput1Constraints);
+
+  input1.addEventListener('input', () => {
+    validateInput1();
+    if (input1.value.length === input1.maxLength) {
+      input2.focus();
+    }
+  });
+
+  input2.addEventListener('input', () => {
+    if (input2.value.length === input2.maxLength) {
+      input3.focus();
+    }
+  });
+
+  input3.addEventListener('input', () => {
+    dash.classList.toggle('dash-filled', input3.value.length > 0);
   });
 
   sendBtn.addEventListener('click', () => {
-    const inputValues = Array.from(inputs).map(input => input.value.trim());
-    const [part1, part2, part3] = inputValues;
+    const part1 = input1.value.trim();
+    const part2 = input2.value.trim();
+    const part3 = input3.value.trim();
+    const selectedCode = countrySelect.value;
+    const max = countryData[selectedCode];
 
-    if (!part1 || !/^\d+$/.test(part1) || !part2 || !/^\d+$/.test(part2)) {
+    if (!part1 || isNaN(part1) || parseInt(part1) > max ||
+        !part2 || isNaN(part2)) {
       confirmation.style.color = '#c53030';
       confirmation.textContent = 'Please enter valid numbers in the first two boxes.';
       confirmation.style.display = 'block';
       return;
     }
 
-    const phone = `${countrySelect.value} ${part1}:${part2}` + (part3 ? `-${part3}` : '');
+    const phone = `${selectedCode} ${part1}:${part2}` + (part3 ? `-${part3}` : '');
     confirmation.style.color = '#2f855a';
     confirmation.textContent = `Phone number ${phone} sent successfully!`;
     confirmation.style.display = 'block';
   });
+
+  // Initial setup
+  updateInput1Constraints();
 </script>
 
 </body>
