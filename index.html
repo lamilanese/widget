@@ -224,31 +224,131 @@
       input3.classList.toggle('normal-input', input3.value.length > 0);
     });
   
-    sendBtn.addEventListener('click', () => {
+    // sendBtn.addEventListener('click', () => {
+    //   const part1 = input1.value.trim();
+    //   const part2 = input2.value.trim();
+    //   const part3 = input3.value.trim();
+    //   const selectedCode = countrySelect.value;
+    //   const max = countryData[selectedCode];
+  
+    //   if (!countryData.hasOwnProperty(selectedCode)) {
+    //     confirmation.style.color = '#c53030';
+    //     confirmation.textContent = 'La référence entrée est incorrecte.';
+    //     confirmation.style.display = 'block';
+    //     return;
+    //   }
+  
+    //   if (!part1 || isNaN(part1) || parseInt(part1) > max || !part2 || isNaN(part2)) {
+    //     confirmation.style.color = '#c53030';
+    //     confirmation.textContent = 'La référence entrée est incomplète.';
+    //     confirmation.style.display = 'block';
+    //     return;
+    //   }
+  
+    //   const phone = `${selectedCode} ${part1}:${part2}` + (part3 ? `-${part3}` : '');
+    //   confirmation.style.color = 'black';
+    //   confirmation.textContent = `Phone number ${phone} sent successfully!`;
+    //   confirmation.style.display = 'block';
+    // });
+
+    sendBtn.addEventListener('click', async () => {
+      const selectedCode = countrySelect.value.trim();
       const part1 = input1.value.trim();
       const part2 = input2.value.trim();
-      const part3 = input3.value.trim();
-      const selectedCode = countrySelect.value;
+      let part3 = input3.value.trim();
       const max = countryData[selectedCode];
-  
+    
+      confirmation.style.color = '#2f855a';
+      confirmation.textContent = '';
+      confirmation.style.display = 'block';
+    
       if (!countryData.hasOwnProperty(selectedCode)) {
         confirmation.style.color = '#c53030';
         confirmation.textContent = 'La référence entrée est incorrecte.';
-        confirmation.style.display = 'block';
         return;
       }
-  
+    
       if (!part1 || isNaN(part1) || parseInt(part1) > max || !part2 || isNaN(part2)) {
         confirmation.style.color = '#c53030';
         confirmation.textContent = 'La référence entrée est incomplète.';
-        confirmation.style.display = 'block';
         return;
       }
-  
-      const phone = `${selectedCode} ${part1}:${part2}` + (part3 ? `-${part3}` : '');
-      confirmation.style.color = 'black';
-      confirmation.textContent = `Phone number ${phone} sent successfully!`;
-      confirmation.style.display = 'block';
+    
+      // Logic from your python to fix part3 and swap if needed
+      if (part3) {
+        if (parseInt(part3) < parseInt(part2)) {
+          let temp = part3;
+          part3 = part2;
+          part2 = temp;
+        }
+      } else {
+        part3 = part2;
+      }
+    
+      // Construct the URL
+      const url = `https://www.aelf.org/bible/${selectedCode}/${part1}`;
+    
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          confirmation.style.color = '#c53030';
+          confirmation.textContent = `Failed to retrieve content. Status code: ${response.status}`;
+          return;
+        }
+    
+        const htmlText = await response.text();
+    
+        // Parse the HTML to extract text (similar to BeautifulSoup)
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlText, 'text/html');
+        const bodyText = doc.body.textContent || "";
+    
+        // Split text into lines and group non-empty lines into sections
+        const lines = bodyText.split('\n');
+        const sections = [];
+        let currentSection = [];
+    
+        for (let line of lines) {
+          const stripped = line.trim();
+          if (stripped) {
+            currentSection.push(stripped);
+          } else if (currentSection.length > 0) {
+            sections.push(currentSection);
+            currentSection = [];
+          }
+        }
+        if (currentSection.length > 0) {
+          sections.push(currentSection);
+        }
+    
+        // Get second last section (like in Python code)
+        const section = sections.length >= 2 ? sections[sections.length - 2] : [];
+    
+        // Filter lines by number between part2 and part3 inclusive
+        const matchingLines = [];
+        const numPart2 = parseInt(part2, 10);
+        const numPart3 = parseInt(part3, 10);
+    
+        for (const line of section) {
+          const parts = line.split(' ', 2);
+          if (parts.length < 2) continue;
+          const num = parseInt(parts[0], 10);
+          if (!isNaN(num) && num >= numPart2 && num <= numPart3) {
+            matchingLines.push(parts[1]);
+          }
+        }
+    
+        if (matchingLines.length === 0) {
+          confirmation.textContent = 'No matching lines found.';
+        } else {
+          // Append matching lines to confirmation, each on new line
+          confirmation.innerHTML = matchingLines.map(line => `<div>${line}</div>`).join('');
+        }
+    
+      } catch (error) {
+        confirmation.style.color = '#c53030';
+        confirmation.textContent = `Error fetching content: ${error.message}`;
+      }
     });
   
     // Initial setup
