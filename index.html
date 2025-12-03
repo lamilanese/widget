@@ -300,8 +300,8 @@ async function launcher(rawText) {
 
         for (let t of tuples) {
             const btn = document.createElement('button');
-            const btnText = `${book} ${t.join(':')} ${String.fromCodePoint(0x1F4CB)}`;
-            btn.textContent = btnText;
+            const btnText = `${book} ${t.join(':')}`;
+            btn.textContent = btnText+ ` ${String.fromCodePoint(0x1F4CB)}`;
             btn.onclick = async () => {
                 console.log("Clicked")
                 const [url, text] = await makeRequest(book, t);
