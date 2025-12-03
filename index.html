@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Phone Input App</title>
-  <style>
+<meta charset="UTF-8">
+<title>Bible Reference Launcher</title>
+<style>
+    :root{
+      --notion-serif: Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", SimSun, "Nanum Myeongjo", NanumMyeongjo, Batang, serif;
+    }
+
     body {
-      font-family: Georgia, serif;
+      font-family: var(--notion-serif);
       transition: background-color 0.3s ease;
       background: white;
       margin: 0;
@@ -23,19 +26,33 @@
         background-color: #191919;
       }
     }
-
     .container {
       background: #eef2f3;
       border-radius: 16px;
       padding: 18px;
       box-shadow: 0 3px 8px #5836271A;
       display: flex;
-      flex-direction: column;
-      width: fit-content;
+      width: 230px;
       box-sizing: border-box;
       max-width: 95vw;
       margin: 0 auto;
+      align-items: center;
+      gap: 10px
     }
+
+    #buttonsContainer {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        background: transparent;     /* transparent background */
+        padding: 10px;
+        box-shadow: 0 0px 0px #ffffff00;
+        width: 230px;
+        height: 100px;
+        overflow-y: auto;          /* vertical scroll */
+        box-sizing: border-box;
+        }
 
     #confirmation {
       max-width: 95vw;
@@ -45,7 +62,7 @@
       padding: 12px;
       text-align: left;  /* or left if you prefer */
       color: black;      /* green by default, override with JS on error */
-      font-family: Georgia, serif;
+      font-family: var(--notion-serif);
       font-weight: 600;
     }
 
@@ -57,7 +74,7 @@
     }
 
     #country-select {
-      font-family: Georgia, serif;
+      font-family: var(--notion-serif);
       width: 60px;
       padding: 6px;
       border-radius: 8px;
@@ -81,7 +98,7 @@
       border-radius: 8px;
       border: 1.5px solid #cbd5e1;
       text-align: center;
-      font-family: Georgia, serif;
+      font-family: var(--notion-serif);
       transition: border-color 0.3s;
     }
 
@@ -115,11 +132,11 @@
 
     button {
       background: #526b7d;
-      width: 30px;
+      width: fit-content;
       border: none;
       color: white;
       padding: 6px;
-      font-family: Georgia, serif;
+      font-family: var(--notion-serif);
       border-radius: 8px;
       cursor: pointer;
       font-weight: 600;
@@ -129,232 +146,180 @@
     button:hover {
       background: #202243;
     }
-  </style>
+
+    .button-vbox { margin-bottom: 10px; }
+</style>
 </head>
 <body>
-
 <div class="container">
-  <div class="input-row">
+  <input type="text" id="refInput" placeholder="Enter references" style="width: 150px;">
+  <button id="goBtn">&rArr;</button>
+</div>
 
-      
-      <!-- Replace the <select> with an input + datalist -->
-  <input id="country-select" list="country-codes" placeholder="Gn" />
-  <datalist id="country-codes"></datalist>
-  
-  <input id="input1" type="text" maxlength="3" placeholder="1" inputmode="numeric" />
-  <span class="separator">:</span>
-  <input id="input2" type="text" maxlength="3" placeholder="2" inputmode="numeric" />
-  <span id="dash" class="separator dash-separator">-</span>
-  <input id="input3" class="special-input" type="text" maxlength="3" placeholder="10" inputmode="numeric" />
-  
-  <button id="send-btn">⇒</button>
-  </div>
-  </div>
-  
-  <div id="confirmation" class="confirmation" style="display:none;"></div>
-  
-  <script>
-    const countryData = {'Gn': 50, 'Ex': 40, 'Lv': 27, 'Nb': 36, 'Dt': 34, 'Jos': 24, 'Jg': 21, 'Rt': 4, '1S': 31, '2S': 24, '1R': 22, 
-                         '2R': 25, '1Ch': 29, '2Ch': 36, 'Esd': 10, 'Ne': 13, 'Tb': 14, 'Jdt': 16, 'Est': 16, '1M': 16, '2M': 15, 'Jb': 42, 
-                         'Ps': 150, 'Pr': 31, 'Qo': 12, 'Ct': 8, 'Sg': 19, 'Si': 51, 'Is': 66, 'Jr': 52, 'Lm': 5, 'Ba': 6, 'Ez': 48, 'Dn': 14, 
-                         'Os': 14, 'Jl': 4, 'Am': 9, 'Ab': 1, 'Jon': 4, 'Mi': 7, 'Na': 3, 'Ha': 3, 'So': 3, 'Ag': 2, 'Za': 14, 'Ml': 3, 'Mt': 28, 
-                         'Mc': 16, 'Lc': 24, 'Jn': 21, 'Ac': 28, 'Rm': 16, '1Co': 16, '2Co': 13, 'Ga': 6, 'Ep': 6, 'Ph': 4, 'Col': 4, '1Th': 5, '2Th': 3, 
-                         '1Tm': 6, '2Tm': 4, 'Tt': 3, 'Phm': 1, 'He': 13, 'Jc': 5, '1P': 5, '2P': 3, '1Jn': 5, '2Jn': 1, '3Jn': 1, 'Jude': 1, 'Ap': 22};
-  
-    const countrySelect = document.getElementById('country-select');
-    const datalist = document.getElementById('country-codes');
-    const input1 = document.getElementById('input1');
-    const input2 = document.getElementById('input2');
-    const input3 = document.getElementById('input3');
-    const dash = document.getElementById('dash');
-    const sendBtn = document.getElementById('send-btn');
-    const confirmation = document.getElementById('confirmation');
-  
-    // Populate datalist with codes
-    for (const code in countryData) {
-      const option = document.createElement('option');
-      option.value = code;
-      datalist.appendChild(option);
-    }
-  
-    function updateInput1Constraints() {
-      const selectedCode = countrySelect.value;
-      const max = countryData[selectedCode];
-      const digits = String(max || 3).length;
-      input1.setAttribute('maxlength', digits);
-      input1.style.width = `${digits * 6 + 12}px`;
-  
-      const value = parseInt(input1.value, 10);
-      if (!isNaN(value) && max && value > max) {
-        input1.value = '1';
-      }
-  
-      validateInput1();
-    }
-  
-    function validateInput1() {
-      const selectedCode = countrySelect.value;
-      const max = countryData[selectedCode];
-      const val = parseInt(input1.value, 10);
-      if (!isNaN(val) && max && val > max) {
-        input1.classList.add('invalid');
-      } else {
-        input1.classList.remove('invalid');
-      }
-    }
-  
-    countrySelect.addEventListener('change', updateInput1Constraints);
-    countrySelect.addEventListener('input', updateInput1Constraints); // For free typing
-  
-    input1.addEventListener('input', () => {
-      validateInput1();
-      if (input1.value.length === input1.maxLength) {
-        input2.focus();
-      }
-    });
-  
-    input2.addEventListener('input', () => {
-      if (input2.value.length === input2.maxLength) {
-        input3.focus();
-      }
-    });
-  
-    input3.addEventListener('input', () => {
-      dash.classList.toggle('dash-filled', input3.value.length > 0);
-      input3.classList.toggle('normal-input', input3.value.length > 0);
-    });
-  
-    // sendBtn.addEventListener('click', () => {
-    //   const part1 = input1.value.trim();
-    //   const part2 = input2.value.trim();
-    //   const part3 = input3.value.trim();
-    //   const selectedCode = countrySelect.value;
-    //   const max = countryData[selectedCode];
-  
-    //   if (!countryData.hasOwnProperty(selectedCode)) {
-    //     confirmation.style.color = '#c53030';
-    //     confirmation.textContent = 'La référence entrée est incorrecte.';
-    //     confirmation.style.display = 'block';
-    //     return;
-    //   }
-  
-    //   if (!part1 || isNaN(part1) || parseInt(part1) > max || !part2 || isNaN(part2)) {
-    //     confirmation.style.color = '#c53030';
-    //     confirmation.textContent = 'La référence entrée est incomplète.';
-    //     confirmation.style.display = 'block';
-    //     return;
-    //   }
-  
-    //   const phone = `${selectedCode} ${part1}:${part2}` + (part3 ? `-${part3}` : '');
-    //   confirmation.style.color = 'black';
-    //   confirmation.textContent = `Phone number ${phone} sent successfully!`;
-    //   confirmation.style.display = 'block';
-    // });
+<div id="buttonsContainer" class="container"></div>
 
-    sendBtn.addEventListener('click', async () => {
-      const selectedCode = countrySelect.value.trim();
-      const part1 = input1.value.trim();
-      const part2 = input2.value.trim();
-      let part3 = input3.value.trim();
-      const max = countryData[selectedCode];
-    
-      confirmation.style.color = '#2f855a';
-      confirmation.textContent = '';
-      confirmation.style.display = 'block';
-    
-      if (!countryData.hasOwnProperty(selectedCode)) {
-        confirmation.style.color = '#c53030';
-        confirmation.textContent = 'La référence entrée est incorrecte.';
-        return;
-      }
-    
-      if (!part1 || isNaN(part1) || parseInt(part1) > max || !part2 || isNaN(part2)) {
-        confirmation.style.color = '#c53030';
-        confirmation.textContent = 'La référence entrée est incomplète.';
-        return;
-      }
-    
-      // Logic from your python to fix part3 and swap if needed
-      if (part3) {
-        if (parseInt(part3) < parseInt(part2)) {
-          let temp = part3;
-          part3 = part2;
-          part2 = temp;
-        }
-      } else {
-        part3 = part2;
-      }
-    
-      // Construct the URL
-      const url = `https://www.aelf.org/bible/${selectedCode}/${part1}`;
-    
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          confirmation.style.color = '#c53030';
-          confirmation.textContent = `Failed to retrieve content. Status code: ${response.status}`;
-          return;
-        }
-    
+<script>
+const lengthBook = {'Gn': 50, 'Ex': 40, 'Lv': 27, 'Nb': 36, 'Dt': 34, 'Jos': 24, 'Jg': 21, 'Rt': 4, '1S': 31, '2S': 24, '1R': 22, '2R': 25,
+                    '1Ch': 29, '2Ch': 36, 'Esd': 10, 'Ne': 13, 'Tb': 14, 'Jdt': 16, 'Est': 16, '1M': 16, '2M': 15, 'Jb': 42, 'Ps': 150, 'Pr': 31,
+                    'Qo': 12, 'Ct': 8, 'Sg': 19, 'Si': 51, 'Is': 66, 'Jr': 52, 'Lm': 5, 'Ba': 6, 'Ez': 48, 'Dn': 14, 'Os': 14, 'Jl': 4, 'Am': 9,
+                    'Ab': 1, 'Jon': 4, 'Mi': 7, 'Na': 3, 'Ha': 3, 'So': 3, 'Ag': 2, 'Za': 14, 'Ml': 3, 'Mt': 28,
+                    'Mc': 16, 'Lc': 24, 'Jn': 21, 'Ac': 28, 'Rm': 16, '1Co': 16, '2Co': 13, 'Ga': 6, 'Ep': 6, 'Ph': 4, 'Col': 4, '1Th': 5,
+                    '2Th': 3, '1Tm': 6, '2Tm': 4, 'Tt': 3, 'Phm': 1, 'He': 13, 'Jc': 5, '1P': 5, '2P': 3, '1Jn': 5, '2Jn': 1, '3Jn': 1,
+                    'Jude': 1, 'Ap': 22};
+
+function extractIds(input) {
+    return input.match(/[a-zA-Z]+[^a-zA-Z]*/g) || [];
+}
+
+function truncateToLastDigit(s) {
+    const match = s.match(/\d(?!.*\d)/);
+    return match ? s.slice(0, match.index + 1) : '';
+}
+
+function cleanLetterNumberBoundary(s) {
+    const match = s.match(/^([a-zA-Z]+)[^0-9]*([0-9].*)$/);
+    return match ? [match[1], match[2]] : [s, ''];
+}
+
+function removeAllSpaces(s) { return s.replace(/\s+/g,''); }
+function removeUnwantedPunctuation(s) { return s.replace(/[^\w\s\-‑–—.,:;]/g,''); }
+function collapseAndWarnOnMixedPunctuation(s) {
+    return s.replace(/([!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~])\1*/g, (m, p1) => p1);
+}
+
+function splitTextToOrderedTuple(text) {
+    return text.split(/[;,]+/).map(part => part.trim().split(/[:,.]+/).filter(Boolean));
+}
+
+async function makeRequest(book, ref) {
+    const targetUrl = `https://www.aelf.org/bible/${book}/${ref[0]}`;
+    const encodedUrl = encodeURIComponent(targetUrl);
+    const proxyUrl = `https://wandering-disk-7183.victoire-monziols.workers.dev?url=${encodedUrl}`;
+    console.log("Current book:", ref[0]);
+
+    try {
+        const response = await fetch(proxyUrl);
         const htmlText = await response.text();
-    
-        // Parse the HTML to extract text (similar to BeautifulSoup)
+
+        // Parse HTML content
         const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlText, 'text/html');
-        const bodyText = doc.body.textContent || "";
-    
-        // Split text into lines and group non-empty lines into sections
-        const lines = bodyText.split('\n');
-        const sections = [];
+        const doc = parser.parseFromString(htmlText, "text/html");
+
+        // Extract text from page
+        let lines = Array.from(doc.body.innerText.split("\n")).map(l => l.trim()).filter(Boolean);
+
+        let sections = [];
         let currentSection = [];
-    
+
         for (let line of lines) {
-          const stripped = line.trim();
-          if (stripped) {
-            currentSection.push(stripped);
-          } else if (currentSection.length > 0) {
-            sections.push(currentSection);
-            currentSection = [];
-          }
+                let stripped = line.trim();
+                if (stripped) {
+                    currentSection.push(stripped);
+                } else if (currentSection.length > 0) {
+                    sections.push(currentSection);
+                    currentSection = [];
+                }
+            }
+            if (currentSection.length > 0) {
+                sections.push(currentSection);
+            }
+
+            // Pick the second-to-last section (Python's [-2])
+            let section = sections.length >= 2 ? sections[sections.length - 2] : [];
+            let matchingLines = [];
+            let matchingLinesRaw = [];
+
+            //if (withoutRefs) {
+            for (let i = 0; i < sections[0].length; i++) {
+                if (i === 0) continue; // skip first line
+
+                let line = sections[0][i].trim();
+                console.log(line)
+
+                // Check if line starts with a number followed by a space
+                if (/^\d+\s/.test(line)) {
+                    // Keep everything after the first space
+                    let afterSpace = line.replace(/^\d+\s/, '');
+                    matchingLines.push(afterSpace);
+                }
+            }
+
+            console.log(matchingLines)
+            // } else {
+            //     for (let line of section) {
+            //         let partsRaw = line.trim();
+            //         let parts = partsRaw.split(/\s+/, 2);
+            //         if (parts.length < 2) continue;
+
+            //         let num = parseInt(parts[0], 10);
+            //         if (!isNaN(num) && num >= userInput2 && num <= userInput3) {
+            //             matchingLines.push(parts[1]);
+            //             matchingLinesRaw.push(partsRaw);
+            //         }
+            //     }
+            // }
+
+            // Create URL with text fragment if matchingLinesRaw exists
+            if (matchingLinesRaw.length > 0) {
+                let matchingPlainRaw = matchingLinesRaw[0]; // only first line
+                let matchingTextRaw = encodeURIComponent(matchingPlainRaw);
+                let newUrl = url + "#:~:text=" + matchingTextRaw;
+                if (newUrl.length < 2000) {
+                    url = newUrl;
+                }
+            }
+
+        return [targetUrl, matchingLines];
+    } catch (e) {
+        console.error("Failed to fetch content:", e);
+        return ["", ["Failed"]];
+    }
+}
+
+
+// Copy to clipboard
+function copyToClipboard(content) {
+    navigator.clipboard.writeText(content).then(() => console.log("Copied!"));
+}
+
+async function launcher(rawText) {
+    const container = document.getElementById('buttonsContainer');
+    container.innerHTML = '';
+    const ids = extractIds(rawText);
+    for (let id of ids) {
+        id = truncateToLastDigit(id);
+        if (!id) continue;
+        let [book, num] = cleanLetterNumberBoundary(id);
+        book = book.charAt(0).toUpperCase() + book.slice(1);
+        if (!(book in lengthBook)) continue;
+
+        num = removeAllSpaces(num);
+        num = removeUnwantedPunctuation(num);
+        num = collapseAndWarnOnMixedPunctuation(num);
+        let tuples = splitTextToOrderedTuple(num);
+
+        for (let t of tuples) {
+            const btn = document.createElement('button');
+            const btnText = `${book} ${t.join(':')} ${String.fromCodePoint(0x1F4CB)}`;
+            btn.textContent = btnText;
+            btn.onclick = async () => {
+                console.log("Clicked")
+                const [url, text] = await makeRequest(book, t);
+                copyToClipboard(`${btnText} : ${text.join(' ')}`);
+            };
+            const div = document.createElement('div');
+            div.className = 'button-vbox';
+            div.appendChild(btn);
+            container.appendChild(div);
         }
-        if (currentSection.length > 0) {
-          sections.push(currentSection);
-        }
-    
-        // Get second last section (like in Python code)
-        const section = sections.length >= 2 ? sections[sections.length - 2] : [];
-    
-        // Filter lines by number between part2 and part3 inclusive
-        const matchingLines = [];
-        const numPart2 = parseInt(part2, 10);
-        const numPart3 = parseInt(part3, 10);
-    
-        for (const line of section) {
-          const parts = line.split(' ', 2);
-          if (parts.length < 2) continue;
-          const num = parseInt(parts[0], 10);
-          if (!isNaN(num) && num >= numPart2 && num <= numPart3) {
-            matchingLines.push(parts[1]);
-          }
-        }
-    
-        if (matchingLines.length === 0) {
-          confirmation.textContent = 'No matching lines found.';
-        } else {
-          // Append matching lines to confirmation, each on new line
-          confirmation.innerHTML = matchingLines.map(line => `<div>${line}</div>`).join('');
-        }
-    
-      } catch (error) {
-        confirmation.style.color = '#c53030';
-        confirmation.textContent = `Error fetching content: ${error.message}`;
-      }
-    });
-  
-    // Initial setup
-    updateInput1Constraints();
-  </script>
-  
+    }
+}
+
+document.getElementById('goBtn').addEventListener('click', () => {
+    const input = document.getElementById('refInput').value;
+    launcher(input);
+});
+</script>
 
 </body>
-</html> 
+</html>
